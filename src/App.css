@@ -1,0 +1,24 @@
+html{
+    font-size: 62.5%;
+}
+
+body{
+    font-size: 2rem;
+    background-color: rgb(250, 250, 250);
+}
+
+.questionContainer{
+    background-color: aquamarine;
+    width: 40rem;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+.questionContainer__buttonContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 2rem;
+}
