@@ -20,6 +20,7 @@ function Home() {
   let possibleAnswersVar : string[][] = []
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState([0])
   const [questionString, setQuestionString] = useState<string[]>([])
+  const [score, setScore] = useState(0)
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -27,7 +28,7 @@ function Home() {
     fetch("https://opentdb.com/api.php?amount=5")
       .then(response => response.json())
       .then((responseData: TriviaResponse) => {
-        setData(responseData);
+        setData(responseData)
       })
   }, [])
 
@@ -74,18 +75,23 @@ function Home() {
     console.log(correctAnswerIndex);
     
     if (index === correctAnswerIndex[questionNumber]) {
-      console.log("Correct!");
+      console.log("Correct! ");
       
-      setQuestionNumber(questionNumber + 1)
-
-      if (containerRef.current) {
-        containerRef.current.scrollTop += containerRef.current.offsetHeight
-      }
-
+      setScore(score + 1)
     } else{
       console.log("wrong");
+    }
+    setQuestionNumber(questionNumber + 1)
+    if (containerRef.current) {
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop += containerRef.current.offsetHeight
+        }
+      }, 1000);
       
     }
+
+    document.querySelectorAll(`.index${correctAnswerIndex[questionNumber]}`)[questionNumber]?.classList.toggle("correct")
   }
 
   function shuffle(array : string[]) {
@@ -123,7 +129,7 @@ function Home() {
               <div className="questionContainer__buttonContainer">
                 {
                   possibleAnswers[currentQuestionIndex] && possibleAnswers[currentQuestionIndex].map((question, index)=>{
-                    return <button key={index} className='questionContainer__answerButton' onClick={()=> checkAnswer(index)}>{question}</button>
+                    return <button key={index} className={`questionContainer__answerButton index${index}`} onClick={()=> checkAnswer(index)}>{question}</button>
                   })
                   
                 }
@@ -134,7 +140,13 @@ function Home() {
         })
 
       ) : (
-        <div>Loading...</div>
+        <div className='slide'>
+          <div className="questionContainer">
+            <div className="questionContainer__buttonContainer"> 
+            <div className="lds-hourglass"></div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
