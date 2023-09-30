@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface TriviaQuestion {
   category: string;
@@ -16,10 +16,12 @@ interface TriviaResponse {
 function Home() {
   const [data, setData] = useState<TriviaResponse>({ results: [] })
   const [questionNumber, setQuestionNumber] = useState(0)
-  const [possibleAnswers, setPossibleAnswers] = useState<string[]>([])
-  let possibleAnswersVar : string[] = []
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0)
-  const [questionString, setQuestionString] = useState("")
+  const [possibleAnswers, setPossibleAnswers] = useState<string[][]>([])
+  let possibleAnswersVar : string[][] = []
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState([0])
+  const [questionString, setQuestionString] = useState<string[]>([])
+
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5")
@@ -31,29 +33,55 @@ function Home() {
 
   useEffect(()=>{
     if (data.results.length > 0) {
-      setQuestionString(decodeHTMLEntities(data.results[questionNumber].question))
-      for (let i = 0; i < data.results[questionNumber].incorrect_answers.length; i++) {
-        possibleAnswersVar.push(decodeHTMLEntities(data.results[questionNumber].incorrect_answers[i]))
+      const questionsArray : string[] = []
+      for (let i = 0; i < data.results.length; i++) {
+        questionsArray.push(decodeHTMLEntities(data.results[i].question))
       }
-      const correctAnswer = decodeHTMLEntities(data.results[questionNumber].correct_answer)
-      possibleAnswersVar.push(correctAnswer)
-      possibleAnswersVar = shuffle(possibleAnswersVar)
+      setQuestionString(questionsArray)
 
-      for (let i = 0; i < possibleAnswersVar.length; i++) {        
-        if(possibleAnswersVar[i] === correctAnswer){
-          setCorrectAnswerIndex(i)
-          console.log("Correct answer is: " + correctAnswer + " " + i);
+      let numberOfQuestions = data.results.length
+      
+      console.log("Start");
+
+      const correctAnswerIndexVar : number[] = []
+
+      for (let j = 0; j < numberOfQuestions; j++) {
+
+        possibleAnswersVar[j] = [];
+        for (let i = 0; i < data.results[j].incorrect_answers.length; i++) { // Pushes the incorrect answers into possibleAnswersVar[]
+          possibleAnswersVar[j].push(decodeHTMLEntities(data.results[j].incorrect_answers[i]))
+        }
+        const correctAnswer = decodeHTMLEntities(data.results[j].correct_answer)// Pushes the correct answer into possibleAnswersVar[]
+        possibleAnswersVar[j].push(correctAnswer)
+  
+        possibleAnswersVar[j] = shuffle(possibleAnswersVar[j]) //Suffles them
+  
+        
+        for (let i = 0; i < possibleAnswersVar[j].length; i++) {//Makes a note of the correct answers
+          if(possibleAnswersVar[j][i] === correctAnswer){
+            correctAnswerIndexVar.push(i)
+            console.log("Correct answer is: " + correctAnswer + " " + i);
+          }
         }
       }
-
-      setPossibleAnswers(possibleAnswersVar)
+      setCorrectAnswerIndex(correctAnswerIndexVar)
+      setPossibleAnswers(possibleAnswersVar)// Defines a list of all answers 
     }
-  },[data, questionNumber])
+  },[data])
+
 
   function checkAnswer(index:number) {
-    if (index === correctAnswerIndex) {
+    console.log(correctAnswerIndex);
+    
+    if (index === correctAnswerIndex[questionNumber]) {
       console.log("Correct!");
+      
       setQuestionNumber(questionNumber + 1)
+
+      if (containerRef.current) {
+        containerRef.current.scrollTop += containerRef.current.offsetHeight
+      }
+
     } else{
       console.log("wrong");
       
@@ -85,23 +113,30 @@ function Home() {
   
 
   return (
-    <>
+    <div className='container' ref={containerRef}>
       {data.results.length > 0 ? (
-        <div className="questionContainer">
-          <div>{questionString}</div>
-          <div className="questionContainer__buttonContainer">
-            {
-              possibleAnswers.map((question, index)=>{
-                return <button className='questionContainer__answerButton' onClick={()=> checkAnswer(index)}>{question}</button>
-              })
-              
-            }
+        questionString.map((currentQuestion, currentQuestionIndex)=>{
+          return (
+            <div className="slide" key={currentQuestionIndex}>
+              <div className="questionContainer">
+              <div className='questionContainer__question'>{currentQuestion}</div>
+              <div className="questionContainer__buttonContainer">
+                {
+                  possibleAnswers[currentQuestionIndex] && possibleAnswers[currentQuestionIndex].map((question, index)=>{
+                    return <button key={index} className='questionContainer__answerButton' onClick={()=> checkAnswer(index)}>{question}</button>
+                  })
+                  
+                }
+              </div>
+            </div>
           </div>
-        </div>
+          )
+        })
+
       ) : (
         <div>Loading...</div>
       )}
-    </>
+    </div>
   );
 }
 
