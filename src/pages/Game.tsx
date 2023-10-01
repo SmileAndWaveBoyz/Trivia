@@ -30,12 +30,10 @@ function Game(props : gameProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetch(`https://opentdb.com/api.php?amount=9${props.category}${props.difficulty}`) 
+    fetch(`https://opentdb.com/api.php?amount=10${props.category}${props.difficulty}`) 
       .then(response => response.json())
       .then((responseData: TriviaResponse) => {
-        setData(responseData)
-        console.log(`https://opentdb.com/api.php?amount=10${props.category}${props.difficulty}`);
-        
+        setData(responseData)        
       })
   }, [])
 
@@ -48,8 +46,6 @@ function Game(props : gameProps) {
       setQuestionString(questionsArray)
 
       let numberOfQuestions = data.results.length
-      
-      console.log("Start");
 
       const correctAnswerIndexVar : number[] = []
 
@@ -68,9 +64,10 @@ function Game(props : gameProps) {
         for (let i = 0; i < possibleAnswersVar[j].length; i++) {//Makes a note of the correct answers
           if(possibleAnswersVar[j][i] === correctAnswer){
             correctAnswerIndexVar.push(i)
-            console.log("Correct answer is: " + correctAnswer + " " + i);
           }
         }
+        const realQuestion = j + 1
+        console.log("Question " + realQuestion + " correct answer is: " + correctAnswer)
       }
       setCorrectAnswerIndex(correctAnswerIndexVar)
       setPossibleAnswers(possibleAnswersVar)// Defines a list of all answers 
@@ -98,7 +95,11 @@ function Game(props : gameProps) {
       
     }
 
-    document.querySelectorAll(`.index${correctAnswerIndex[questionNumber]}`)[questionNumber]?.classList.toggle("correct")
+    const realQ = questionNumber + 1
+    
+    console.log("Selecting: " + `.index${questionNumber}${correctAnswerIndex[questionNumber]}`);
+    
+    document.querySelector(`.index${questionNumber}${correctAnswerIndex[questionNumber]}`)?.classList.add("correct")
   }
 
   function shuffle(array : string[]) {
@@ -131,13 +132,13 @@ function Game(props : gameProps) {
         questionString.map((currentQuestion, currentQuestionIndex)=>{
           return (
             <div className="slide" key={currentQuestionIndex}>
-              <p className='score'>Question {questionNumber + 1}</p>
+              <p className='score'>Question {currentQuestionIndex + 1}</p>
               <div className="questionContainer">
               <div className='questionContainer__question'>{currentQuestion}</div>
               <div className="questionContainer__buttonContainer">
                 {
                   possibleAnswers[currentQuestionIndex] && possibleAnswers[currentQuestionIndex].map((question, index)=>{
-                    return <button key={index} className={`questionContainer__answerButton index${index}`} onClick={()=> checkAnswer(index)}>{question}</button>
+                    return <button key={index} className={`questionContainer__answerButton index${currentQuestionIndex}${index}`} onClick={()=> checkAnswer(index)}>{question}</button>
                   })
                   
                 }
@@ -147,7 +148,6 @@ function Game(props : gameProps) {
             <p className='score'>Score: {score}</p>
           </div>
 
-          
           )
         })
 
@@ -160,7 +160,6 @@ function Game(props : gameProps) {
           </div>
         </div>
       )}
-
 
     </div>
   );
