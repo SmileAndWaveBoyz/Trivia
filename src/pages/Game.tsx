@@ -38,6 +38,19 @@ function Game(props : gameProps) {
   }, [])
 
   useEffect(()=>{
+    window.addEventListener("resize", ()=>{
+      if (containerRef.current) {
+        containerRef.current.scrollTop = (window.innerHeight * (questionNumber))
+      }
+    })
+
+    return () => {
+      window.removeEventListener('resize', () => {
+      })
+    }
+  },[questionNumber])
+
+  useEffect(()=>{
     if (data.results.length > 0) {
       const questionsArray : string[] = []
       for (let i = 0; i < data.results.length; i++) {
@@ -66,8 +79,6 @@ function Game(props : gameProps) {
             correctAnswerIndexVar.push(i)
           }
         }
-        const realQuestion = j + 1
-        console.log("Question " + realQuestion + " correct answer is: " + correctAnswer)
       }
       setCorrectAnswerIndex(correctAnswerIndexVar)
       setPossibleAnswers(possibleAnswersVar)// Defines a list of all answers 
@@ -76,11 +87,8 @@ function Game(props : gameProps) {
 
 
   function checkAnswer(index:number) {
-    console.log(correctAnswerIndex);
     
-    if (index === correctAnswerIndex[questionNumber]) {
-      console.log("Correct! ");
-      
+    if (index === correctAnswerIndex[questionNumber]) {      
       setScore(score + 1)
     } else{
       console.log("wrong");
@@ -94,10 +102,6 @@ function Game(props : gameProps) {
       }, 1000);
       
     }
-
-    const realQ = questionNumber + 1
-    
-    console.log("Selecting: " + `.index${questionNumber}${correctAnswerIndex[questionNumber]}`);
     
     document.querySelector(`.index${questionNumber}${correctAnswerIndex[questionNumber]}`)?.classList.add("correct")
   }

@@ -37,7 +37,7 @@ function App() {
             page === 1 ?
             <div className="questionContainer">
               <h1>Now select a category</h1> 
-              <div className="questionContainer__buttonContainer">
+              <div className="questionContainer__buttonContainer home">
                   <button className='questionContainer__answerButton' onClick={()=> {setPage(2)}}>Any</button>
                   <button className='questionContainer__answerButton' onClick={()=> {setCategory("&category=9"); setPage(2)}}>General</button>
                   <button className='questionContainer__answerButton' onClick={()=> {setCategory("&category=27"); setPage(2)}}>Animals</button>

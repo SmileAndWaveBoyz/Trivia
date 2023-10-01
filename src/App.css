@@ -24,8 +24,8 @@ h1{
 }
 
 .container{
-    height: 100vh;
-    overflow: scroll;
+    /* height: 100vh; */
+    overflow: hidden;
     scroll-behavior: smooth;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
@@ -38,13 +38,12 @@ h1{
 }
 
 .slide{
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* outline: 5px solid wheat; */
 }
 
 .questionContainer{
@@ -109,6 +108,10 @@ h1{
 @media screen and (min-width: 1024px) {
     .container{
         max-width: 1000px;
+    }
+    .questionContainer__buttonContainer.home{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
 
