@@ -13,7 +13,8 @@ interface TriviaResponse {
   results: TriviaQuestion[];
 }
 
-function Home() {
+
+function Game() {
   const [data, setData] = useState<TriviaResponse>({ results: [] })
   const [questionNumber, setQuestionNumber] = useState(0)
   const [possibleAnswers, setPossibleAnswers] = useState<string[][]>([])
@@ -25,7 +26,7 @@ function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetch("https://opentdb.com/api.php?amount=5")
+    fetch("https://opentdb.com/api.php?amount=10")
       .then(response => response.json())
       .then((responseData: TriviaResponse) => {
         setData(responseData)
@@ -124,6 +125,7 @@ function Home() {
         questionString.map((currentQuestion, currentQuestionIndex)=>{
           return (
             <div className="slide" key={currentQuestionIndex}>
+              <p className='score'>Question {questionNumber + 1}</p>
               <div className="questionContainer">
               <div className='questionContainer__question'>{currentQuestion}</div>
               <div className="questionContainer__buttonContainer">
@@ -134,8 +136,12 @@ function Home() {
                   
                 }
               </div>
+              
             </div>
+            <p className='score'>Score: {score}</p>
           </div>
+
+          
           )
         })
 
@@ -148,8 +154,10 @@ function Home() {
           </div>
         </div>
       )}
+
+
     </div>
   );
 }
 
-export default Home;
+export default Game;

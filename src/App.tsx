@@ -4,11 +4,15 @@ import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import {Route, Routes } from 'react-router-dom';
 import "aos/dist/aos.css";
-import Home from "./pages/Home"
+import Game from "./pages/Game"
 const AOS = require('aos'); // This throws an error if you use import for some reason
 
 
 function App() {
+
+  const [difficulty, setDifficulty] = useState("&difficulty=easy")
+  const [catagorie, setCatagorie] = useState("")
+  const [page, setPage] = useState(0)
 
   useEffect(() => {
     AOS.init() // This initiates the animate on scroll library
@@ -16,10 +20,44 @@ function App() {
 
   return (
     <>
+    <div className='container'>
+        <div className="slide">
+          {
+            page === 0 ?
+          
+            <div className="questionContainer">
+              <h1>Hey there! Welcome to Nathan's super fun trvia quiz. <br></br>Please select a difficulty:</h1> 
+              <div className="questionContainer__buttonContainer">
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&difficulty=easy"); setPage(1)}}>Easy</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&difficulty=medium"); setPage(1)}}>Medium</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&difficulty=hard"); setPage(1)}}>Hard</button>
+              </div>
+            </div>
+            :
+            page === 1 ?
+            <div className="questionContainer">
+              <h1>Now select a catagorie</h1> 
+              <div className="questionContainer__buttonContainer">
+                  <button className='questionContainer__answerButton' onClick={()=> {setPage(2)}}>Any</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=9"); setPage(2)}}>General</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=18"); setPage(2)}}>Animals</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=26"); setPage(2)}}>Celebrities</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=11"); setPage(2)}}>Films</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=14"); setPage(2)}}>TV</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=12"); setPage(2)}}>Music</button>
+                  <button className='questionContainer__answerButton' onClick={()=> {setDifficulty("&category=18"); setPage(2)}}>Computers</button>
+              </div>
+            </div>
+            :
+            page === 2 ?
 
-        <Routes>
-          <Route path='/' element={<Home/>}/>
-        </Routes>
+            <Game/>
+            :
+            null
+            }
+        </div>
+    </div>
+
     </>
   );
 }
