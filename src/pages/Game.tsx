@@ -13,8 +13,12 @@ interface TriviaResponse {
   results: TriviaQuestion[];
 }
 
+interface gameProps{
+  difficulty: string,
+  category: string
+}
 
-function Game() {
+function Game(props : gameProps) {
   const [data, setData] = useState<TriviaResponse>({ results: [] })
   const [questionNumber, setQuestionNumber] = useState(0)
   const [possibleAnswers, setPossibleAnswers] = useState<string[][]>([])
@@ -26,10 +30,12 @@ function Game() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetch("https://opentdb.com/api.php?amount=10")
+    fetch(`https://opentdb.com/api.php?amount=9${props.category}${props.difficulty}`) 
       .then(response => response.json())
       .then((responseData: TriviaResponse) => {
         setData(responseData)
+        console.log(`https://opentdb.com/api.php?amount=10${props.category}${props.difficulty}`);
+        
       })
   }, [])
 
